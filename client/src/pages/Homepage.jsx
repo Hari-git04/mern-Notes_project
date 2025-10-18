@@ -7,25 +7,28 @@ import axios from 'axios'
 function Homepage () {
   const [notes, setNotes] = useState([]);
 
-  useEffect(() => {
-    const fetchnotes=async()=>{
-   try {
-    const res=await axios.get('http://localhost:5000/note');
-    setNotes(res.data)
-   } catch (error) {
-    console.log(error); 
-   }
+  const getApiBase = () => {
+    return import.meta?.env?.VITE_API_URL || 'http://localhost:5000';
   };
-   fetchnotes();
+
+  useEffect(() => {
+    const fetchnotes = async () => {
+      try {
+        const base = getApiBase();
+        const res = await axios.get(`${base}/note`);
+        setNotes(res.data)
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchnotes();
   }, []);
 
   return (
     <>
       <Navbar />
-
-    {notes.length===0 && <Notenotfound/>}
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {notes.length===0 && <Notenotfound/>}
+      <div className="p-4 md:p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {notes.map(note => (
           <Notecard key={note._id} note={note} setNotes={setNotes} />
         ))}
